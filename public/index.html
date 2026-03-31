@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LLM CronJob Portal</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>🤖 LLM CronJob Portal</h1>
+    <nav>
+      <button class="tab-btn active" data-tab="jobs">Jobs</button>
+      <button class="tab-btn" data-tab="configs">LLM Configs</button>
+      <button class="tab-btn" data-tab="history">Run History</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ── JOBS TAB ── -->
+    <section id="tab-jobs" class="tab-content active">
+      <div class="section-header">
+        <h2>Cron Jobs</h2>
+        <button class="btn btn-primary" id="btn-new-job">+ New Job</button>
+      </div>
+      <div id="jobs-list" class="card-grid"></div>
+    </section>
+
+    <!-- ── CONFIGS TAB ── -->
+    <section id="tab-configs" class="tab-content">
+      <div class="section-header">
+        <h2>LLM Configurations</h2>
+        <button class="btn btn-primary" id="btn-new-config">+ New Config</button>
+      </div>
+      <div id="configs-list" class="card-grid"></div>
+    </section>
+
+    <!-- ── HISTORY TAB ── -->
+    <section id="tab-history" class="tab-content">
+      <div class="section-header">
+        <h2>Run History</h2>
+        <button class="btn btn-secondary" id="btn-refresh-history">↻ Refresh</button>
+      </div>
+      <div id="history-filter">
+        <label>Filter by job:
+          <select id="history-job-filter">
+            <option value="">All jobs</option>
+          </select>
+        </label>
+      </div>
+      <div id="history-list"></div>
+    </section>
+  </main>
+
+  <!-- ── JOB MODAL ── -->
+  <div id="modal-job" class="modal hidden">
+    <div class="modal-content">
+      <h3 id="modal-job-title">New Job</h3>
+      <form id="form-job">
+        <input type="hidden" id="job-id" />
+        <label>Name *<input type="text" id="job-name" required /></label>
+        <label>Description<textarea id="job-description" rows="2"></textarea></label>
+        <label>Prompt *<textarea id="job-prompt" rows="5" required></textarea></label>
+        <label>Cron Expression *
+          <input type="text" id="job-cron" required placeholder="e.g. 0 9 * * 1-5" />
+          <small>min hour dom month dow &nbsp;|&nbsp; <a href="https://crontab.guru" target="_blank">crontab.guru</a></small>
+        </label>
+        <label>LLM Config *
+          <select id="job-config" required></select>
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" id="job-enabled" checked /> Enabled
+        </label>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── CONFIG MODAL ── -->
+  <div id="modal-config" class="modal hidden">
+    <div class="modal-content">
+      <h3 id="modal-config-title">New LLM Config</h3>
+      <form id="form-config">
+        <input type="hidden" id="config-id" />
+        <label>Name *<input type="text" id="config-name" required /></label>
+        <label>Provider *
+          <select id="config-provider" required>
+            <option value="openai">OpenAI</option>
+            <option value="gemini">Google Gemini</option>
+            <option value="custom">Custom URL</option>
+          </select>
+        </label>
+        <label>API Key *<input type="password" id="config-api-key" required /></label>
+        <label id="label-base-url" class="hidden">Base URL *
+          <input type="url" id="config-base-url" placeholder="https://api.example.com/v1/chat/completions" />
+        </label>
+        <label>Model *<input type="text" id="config-model" required placeholder="e.g. gpt-4o-mini" /></label>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── RUN RESULT MODAL ── -->
+  <div id="modal-result" class="modal hidden">
+    <div class="modal-content modal-wide">
+      <h3>Run Result</h3>
+      <div id="result-content"></div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary modal-close">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+  <script src="app.js"></script>
+</body>
+</html>
